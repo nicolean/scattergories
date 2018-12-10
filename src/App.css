@@ -1,0 +1,92 @@
+.row {
+  display: flex;
+  flex-flow: wrap;
+}
+
+#title {
+  text-align: center;
+  font-size: 2rem;
+  margin: 1.5rem 0rem;  
+}
+
+#game-container {
+  height: 100%;
+  width: 100%;
+}
+
+#timer-container {
+  width: 100%;
+  align-content: center;
+  justify-content: center;
+  font-size: 4rem;
+  margin: .5rem 0rem 1.5rem 0rem;
+}
+
+#main-row {
+  width: 100%;
+}
+
+#letter-container {
+  min-height: 55vh;
+  font-size: 45vw;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  width: 50%;
+}
+
+#letter {
+  width: 100%;
+  display: block;
+  align-content: center;
+  /* min-width: 50vw; */
+}
+
+#letter-start-text {
+  font-size: 12px;
+  color: rgb(167, 167, 167);
+  display: none;
+}
+#letter-start-text.show {
+  display: block;
+}
+
+#letter-button-container {
+  width: 100%;
+  /* max-height: 2rem; */
+  justify-content: center;
+}
+
+#new-letter-button {
+  display: block;
+  width: 95%;
+  padding: .75rem;
+  font-size: 14px;
+}
+
+#list-container {
+  width: 45%;
+  align-content: center;
+  padding: 0rem 0.5rem;
+}
+
+#list-title {
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.list-item {
+  border-bottom: 1px solid black;
+  padding: 0rem 0rem 0.3rem 0.3rem;
+  margin: 0.75rem 0rem;
+}
+
+.list-number {
+  width: 1.75rem;
+  display: inline-block;
+}
+
+.list-value {
+  display: inline-block;
+}
