@@ -3,9 +3,10 @@ body {
 }
 
 button {
-  padding: 0.5rem;
+  padding: 0.75rem;
+  font-size: 14px;
   color: white;
   border-radius: 0.5rem;
   border: 0px;
-  background-color: rgb(34, 92, 34);
+  display: block;
 }

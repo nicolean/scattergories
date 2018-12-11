@@ -57,11 +57,21 @@
   justify-content: center;
 }
 
-#new-letter-button {
-  display: block;
-  width: 95%;
-  padding: .75rem;
-  font-size: 14px;
+#start-button {
+  background-color: rgb(34, 92, 34);
+  /* width: 95%; */
+}
+
+#pause-button {
+  background-color: rgb(224, 199, 52);
+}
+
+#stop-button {
+  background-color: rgb(139, 19, 19);
+}
+
+#reset-button {
+  background-color: rgb(104, 104, 104);
 }
 
 #list-container {

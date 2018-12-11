@@ -2,11 +2,14 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
-import Countdown from 'react-countdown-now';
 
 import lists from './lists.js';
 
+import Timer from 'easytimer.js';
+
 const alphabet = 'abcdefghijklmnoprstw';
+const tick = new Audio('/tick.mp3');
+const timerLengths = [ 60, 120, 180 ];
 
 const ItemsList = (props) => {
   let counter = 0;
@@ -34,23 +37,56 @@ class App extends Component {
       start: false,
       currentListId: 0,
       currentList: {name: null, data: []},
-      time: "2:00"
+      timer: new Timer(),
+      timerLength: 120,
+      currentTime: '00:02:00',
+      timerStatus: 'stop'
     };
     
     this.startGame = this.startGame.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.pauseTimer = this.pauseTimer.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
     this.getList = this.getList.bind(this);
   }
 
-  startCounter() {
-    const element = <Countdown date={Date.now() + 120000} />;
-    ReactDOM.render(element, document.getElementById('timer'));
+  pauseTimer() {
+    console.log('pauseTimer');
+    let timer = this.state.timer;
+    timer.pause();
+    this.setState({ timer: timer, timerStatus: 'pause' });
+  }
+
+  stopTimer() {
+    console.log('stopTimer');
+    let timer = this.state.timer;
+    timer.stop();
+    this.setState({ timer: timer, timerStatus: 'stop' });
+  }
+
+  startTimer() {
+    let timer = this.state.timer;
+    timer.start({countdown: true, startValues: {seconds: this.state.timerLength}});
+    this.setState({ timerStatus: 'start' });
+    timer.addEventListener("secondsUpdated", function(e) {
+      let timeValues = timer.getTimeValues().toString();
+      this.setState({ currentTime: timeValues });
+      tick.play();
+    }.bind(this));
+    this.setState({ timer });
   }
 
   startGame() {
-    let newLetter = alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase();
-    this.setState({ letter: newLetter, start: true });
-    this.getList();
-    this.startCounter();
+    if (this.state.timerStatus !== 'pause') {
+      let newLetter = alphabet[Math.floor(Math.random() * alphabet.length)].toUpperCase();
+      this.setState({ letter: newLetter, start: true });
+      this.getList();
+      this.startTimer();
+    } else {
+      let timer = this.state.timer;
+      timer.start();
+      this.setState({ timer });
+    }
   }
 
   getList() {
@@ -69,7 +105,7 @@ class App extends Component {
         <div id="game-container" className="row">
           <div id="timer-container" className="row">
             <div id="timer">
-              Test
+              {this.state.currentTime}
             </div>
           </div>
           <div id="main-row" className="row">
@@ -87,7 +123,9 @@ class App extends Component {
             </div>
           </div>
           <div id="letter-button-container" className="row">
-            <button id="new-letter-button" onClick={this.startGame}>Start!</button>
+            <button id="start-button" onClick={this.startGame}>Start!</button>
+            <button id="pause-button" onClick={this.pauseTimer}>Pause</button>
+            <button id="stop-button" onClick={this.stopTimer}>Stop</button>
           </div>
         </div>
       </div>

@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "ajv": "^6.6.1",
+    "easytimer.js": "^2.3.0",
     "react": "^16.5.1",
-    "react-countdown-now": "^1.3.0",
     "react-dom": "^16.5.1",
     "react-scripts": "1.1.5"
   },
