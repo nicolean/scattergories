@@ -9,7 +9,13 @@ import Timer from 'easytimer.js';
 
 const alphabet = 'abcdefghijklmnoprstw';
 const tick = new Audio('/tick.mp3');
-const timerLengths = [ 60, 120, 180 ];
+// TODO:  update panic tick sound to double play
+const panic_tick = new Audio('/panic_tick.mp3');
+const timerLengths = [
+  { label: '1:00', seconds: 60 },
+  { label: '2:00', seconds: 120 },
+  { label: '3:00', seconds: 180 }
+];
 
 const ItemsList = (props) => {
   let counter = 0;
@@ -33,35 +39,52 @@ class App extends Component {
     super();
 
     this.state = {
+      showMenu: false,
       letter: null,
       start: false,
       currentListId: 0,
       currentList: {name: null, data: []},
       timer: new Timer(),
       timerLength: 120,
-      currentTime: '00:02:00',
+      currentTime: '2:00',
       timerStatus: 'stop'
     };
     
+    this.toggleMenu = this.toggleMenu.bind(this);
     this.startGame = this.startGame.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.pauseTimer = this.pauseTimer.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
+    this.timerLengthChange = this.timerLengthChange.bind(this);
     this.getList = this.getList.bind(this);
+  }
+
+  toggleMenu() {
+    if (this.state.showMenu === false) {
+      this.setState({ showMenu: true });
+    } else {
+      this.setState({ showMenu: false });
+    }
+  }
+
+  timerLengthChange(e) {
+    let selectedTime = parseInt(e.target.value);
+    var result = timerLengths.filter(x => { return x.seconds === selectedTime });
+    this.setState({ timerLength: selectedTime, currentTime: result[0].label });
   }
 
   pauseTimer() {
     console.log('pauseTimer');
     let timer = this.state.timer;
     timer.pause();
-    this.setState({ timer: timer, timerStatus: 'pause' });
+    this.setState({ timerStatus: 'pause' });
   }
 
   stopTimer() {
     console.log('stopTimer');
     let timer = this.state.timer;
     timer.stop();
-    this.setState({ timer: timer, timerStatus: 'stop' });
+    this.setState({ timerStatus: 'stop' });
   }
 
   startTimer() {
@@ -69,11 +92,14 @@ class App extends Component {
     timer.start({countdown: true, startValues: {seconds: this.state.timerLength}});
     this.setState({ timerStatus: 'start' });
     timer.addEventListener("secondsUpdated", function(e) {
-      let timeValues = timer.getTimeValues().toString();
+      let timeValues = timer.getTimeValues().minutes+':'+timer.getTimeValues().seconds;
       this.setState({ currentTime: timeValues });
-      tick.play();
+      if (timer.getTimeValues().minutes < 1 && timer.getTimeValues().seconds < 21) {
+        panic_tick.play();
+      } else {
+        tick.play();
+      }
     }.bind(this));
-    this.setState({ timer });
   }
 
   startGame() {
@@ -85,7 +111,6 @@ class App extends Component {
     } else {
       let timer = this.state.timer;
       timer.start();
-      this.setState({ timer });
     }
   }
 
@@ -101,6 +126,22 @@ class App extends Component {
   render() {
     return (
       <div className="main">
+        <div id="game-menu-toggle" onClick={this.toggleMenu} className={this.state.showMenu ? 'show' : ''}>
+          <i className="fas fa-bars"></i>
+        </div>
+        <div id="game-menu" className={this.state.showMenu ? 'show' : ''}>
+          <div id="game-menu-content">
+            menu
+            <div id="timer-length-select-container">
+              <label>Game Length</label>
+              <select id="timer-length-select" value={this.state.timerLength} onChange={this.timerLengthChange}>
+                {timerLengths.map(x => {
+                  return <option key={x.seconds} value={x.seconds}>{x.label}</option>
+                })}
+              </select>
+            </div>
+          </div>
+        </div>
         <div id="title">SCATTERGORIES</div>
         <div id="game-container" className="row">
           <div id="timer-container" className="row">
@@ -125,7 +166,7 @@ class App extends Component {
           <div id="letter-button-container" className="row">
             <button id="start-button" onClick={this.startGame}>Start!</button>
             <button id="pause-button" onClick={this.pauseTimer}>Pause</button>
-            <button id="stop-button" onClick={this.stopTimer}>Stop</button>
+            <button id="stop-button" onClick={this.stopTimer}>End Game</button>
           </div>
         </div>
       </div>
